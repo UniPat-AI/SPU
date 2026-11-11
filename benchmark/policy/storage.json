@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0",
+  "inline_file_limit_bytes": 5242880,
+  "inline_task_limit_bytes": 20971520,
+  "max_files_per_task": 2000,
+  "approved_hf_repositories": [],
+  "approved_https_origins": [],
+  "role_prefixes": {
+    "input": ["assets/input/", "environment/data/"],
+    "verification": ["assets/verification/", "tests/data/", "tests/reference/"],
+    "provenance": ["assets/provenance/", "authoring/provenance/"]
+  },
+  "excluded_directory_names": [".git", ".venv", "node_modules", "__pycache__", ".cache"],
+  "excluded_root_directories": ["jobs", "runs", "model_output", "model_traj", "eval_result"]
+}

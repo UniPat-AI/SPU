@@ -1,0 +1,28 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {derive,answerRelations,score,allowEvaluation,statsOf} from '../scripts/core.mjs';
+const policy={reviewers:['a','b','c'].map((login,i)=>({login,roles:[['domain','technical','final'][i]],domains:['*']}))};
+function pr(){return {number:1,state:'open',author:'author',domain:'life',head_sha:'new',triaged:true,draft:false,assignments:{domain:'a',technical:'b',final:'c'},requested_reviewers:[],reviews:['a','b','c'].map((login,i)=>({login,state:'APPROVED',sha:'new',at:`2026-10-19T0${i+1}:00:00Z`})),checks:[{name:'validate',status:'passed',sha:'new',trusted:true,at:'2026-10-19T00:00:00Z'}]};}
+test('historical unanimous approvals never unlock merge or supply a current AI verdict',()=>{const r=derive(pr(),policy,['validate']);assert.equal(r.merge_ready,false);assert.equal(r.approvals,0);assert.deepEqual(r.reviewers,[]);assert.equal(r.status,'review');assert.equal(r.assignments,undefined)});
+test('head update invalidates old check success',()=>{const p=pr();p.head_sha='next';const r=derive(p,policy,['validate']);assert.equal(r.checks[0].status,'stale');assert.equal(r.status,'checks')});
+test('historical changes-requested reviews cannot override current automated checks',()=>{const p=pr();p.reviews[0].state='CHANGES_REQUESTED';assert.equal(derive(p,policy,['validate']).status,'review')});
+test('untrusted and empty checks cannot silently pass',()=>{const p=pr();p.checks[0].trusted=false;assert.equal(derive(p,policy,['validate']).checks[0].status,'not_run');assert.equal(derive(p,policy,[]).status,'checks')});
+test('failed checks request author changes but service errors require maintainer attention',()=>{const p=pr();p.checks[0].status='failed';assert.equal(derive(p,policy,['validate']).action,'author');p.checks[0].status='error';assert.equal(derive(p,policy,['validate']).action,'maintainer')});
+test('a successful commit status alone never authorizes merging',()=>{const p=pr();p.checks[0].name='spu/clarity-audit';assert.equal(derive(p,policy,['spu/clarity-audit']).merge_ready,false)});
+test('merged and closed remain distinct from release or rejection',()=>{const p=pr();p.state='merged';assert.equal(derive(p,policy,['validate']).status,'accepted');p.release='v1';assert.equal(derive(p,policy,['validate']).status,'released');p.state='closed';assert.equal(derive(p,policy,['validate']).status,'closed')});
+test('draft and triage cannot become ready through prior approvals',()=>{const p=pr();p.draft=true;assert.equal(derive(p,policy,['validate']).status,'draft');p.draft=false;p.triaged=false;assert.equal(derive(p,policy,['validate']).status,'triage')});
+const answer=()=>({candidate_ids:['A','B','C'],strict_relations:[['A','B'],['A','C']],ties:[],unknown_pairs:[['B','C']]});
+test('unknown relation is unscored, not a tie',()=>{assert.equal(score(answer(),[['A'],['C'],['B']]).score,1);assert.equal(score(answer(),[['A'],['B','C']]).score,1)});
+test('reverse ordering fails the known relations',()=>assert.equal(score(answer(),[['B','C'],['A']]).score,0));
+test('duplicate candidates in prediction is invalid',()=>assert.equal(score(answer(),[['A'],['B','B']]).valid,false));
+test('missing candidate is invalid',()=>assert.equal(score(answer(),[['A'],['B']]).valid,false));
+test('strict cycle is rejected',()=>{const a=answer();a.strict_relations.push(['B','A']);assert.throws(()=>answerRelations(a),/环/)});
+test('tie conflicting with strict relation is rejected',()=>{const a=answer();a.ties=[['A','B']];assert.throws(()=>answerRelations(a),/冲突/)});
+test('unknown conflicting with transitive evidence is rejected',()=>{const a=answer();a.strict_relations.push(['B','C']);assert.throws(()=>answerRelations(a),/冲突/)});
+test('transitive closure scored once per pair',()=>{const a={candidate_ids:['A','B','C'],strict_relations:[['A','B'],['B','C'],['A','C']]};assert.equal(answerRelations(a).length,3)});
+test('explicit tie must stay tied',()=>{const a={candidate_ids:['A','B'],ties:[['A','B']]};assert.equal(score(a,[['A'],['B']]).score,0)});
+test('empty evidence is not scoreable',()=>assert.throws(()=>answerRelations({candidate_ids:['A','B']}),/可评分/));
+test('zero budget and unknown costs block evaluation',()=>{assert.equal(allowEvaluation({enabled:false},1).allowed,false);assert.equal(allowEvaluation({enabled:true,per_run_limit_usd:0,monthly_budget_usd:0},1).allowed,false);assert.equal(allowEvaluation({enabled:true},NaN).allowed,false)});
+test('budget checks both per-run and cumulative cost',()=>{const c={enabled:true,per_run_limit_usd:3,monthly_budget_usd:5};assert.equal(allowEvaluation(c,2,4).allowed,false);assert.equal(allowEvaluation(c,2,2).allowed,true)});
+test('enabled evaluation without finite caps is blocked',()=>{assert.equal(allowEvaluation({enabled:true},1).allowed,false);assert.equal(allowEvaluation({enabled:true,per_run_limit_usd:Infinity,monthly_budget_usd:10},1).allowed,false)});
+test('fixes do not inflate released task count',()=>{const rows=[{kind:'task',state:'merged',task_ids:['one'],release:'v1',domain:'life'},{kind:'fix',state:'merged',task_ids:['one'],release:'v1',domain:'life'}];const s=statsOf(rows,[],[],[{id:'life'},{id:'math'}]);assert.equal(s.released,1);assert.equal(s.coverage[1].released,0)});
+test('suspended task is excluded from released count',()=>assert.equal(statsOf([{kind:'task',state:'merged',task_ids:['one'],release:'v1',lifecycle:'suspended'}],[],[],[]).released,0));

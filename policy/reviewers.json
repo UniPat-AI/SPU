@@ -1,0 +1,8 @@
+{
+  "schema_version": "1.0",
+  "reviewers": [],
+  "note": "Configure real domain, technical, and final reviewers before accepting tasks. Synthetic reviewers are never authorized.",
+  "maintainers": [
+    "Dominic789654"
+  ]
+}

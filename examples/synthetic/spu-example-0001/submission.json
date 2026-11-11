@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0",
+  "channel": "public_pr",
+  "source_type": "own_open_data",
+  "source_description": "Synthetic development example, not scientific experimental data.",
+  "source_url": "https://example.com/spu-synthetic",
+  "rights": "Original synthetic example. All task components may be public.",
+  "redistribution": "original",
+  "authorized": true,
+  "complete_task_public": true
+}
