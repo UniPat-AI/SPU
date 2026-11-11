@@ -1,0 +1,21 @@
+SYNTHETIC EXAMPLE · NOT EXPERIMENTAL EVIDENCE
+
+Relative stability of protein variants
+
+CONTEXT
+Compare three candidate systems, A, B, and C, under matched conditions. A higher target metric indicates better performance. All values below are invented for this workflow demonstration.
+
+EVIDENCE
+Candidate    Target metric    Evidence interval
+A            85               82–88
+B            67               61–74
+C            70               65–76
+
+For this example, a strict ordering is supported only when the evidence intervals do not overlap. The evidence therefore supports A > B and A > C, while the ordering of B and C remains unknown.
+
+YOUR TASK
+Return the candidates as an ordered JSON array of groups, from best to worst. Include every candidate exactly once.
+
+OUTPUT CONTRACT
+Example: [["A"],["B"],["C"]]
+Only supported relations are scored. Choosing an order for B and C does not establish a scientific conclusion about their relative performance.

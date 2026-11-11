@@ -1,0 +1,48 @@
+{
+  "title": "Science Prediction Universe",
+  "short_name": "SPU",
+  "mode": "live",
+  "repository": "UniPat-AI/SPU",
+  "domains": [
+    {
+      "id": "life-sciences",
+      "label": "Life sciences",
+      "color": "#4a8066"
+    },
+    {
+      "id": "physical-sciences",
+      "label": "Physical sciences",
+      "color": "#6a7fc0"
+    },
+    {
+      "id": "chemical-sciences",
+      "label": "Chemical sciences",
+      "color": "#b08950"
+    },
+    {
+      "id": "earth-sciences",
+      "label": "Earth sciences",
+      "color": "#65959a"
+    },
+    {
+      "id": "mathematical-sciences",
+      "label": "Mathematical sciences",
+      "color": "#987fb0"
+    },
+    {
+      "id": "engineering-sciences",
+      "label": "Engineering sciences",
+      "color": "#ac7467"
+    }
+  ],
+  "required_checks": [
+    "task-validation",
+    "reference-validation"
+  ],
+  "stale_hours": 2,
+  "evaluation": {
+    "enabled": false,
+    "monthly_budget_usd": 0,
+    "per_run_limit_usd": 0
+  }
+}

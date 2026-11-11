@@ -1,0 +1,33 @@
+{
+  "version": "1.0",
+  "columns": [
+    {"name":"task_id","required":"Required","type":"Text","description":"Stable task identifier matching task-plan.md. Use the same identifier for every row belonging to one task.","example":"reaction-ranking-001"},
+    {"name":"group_id","required":"Required","type":"Text","description":"Comparison group with the same target metric, protocol and population. Rank only within this group; never compare ranks across groups.","example":"conditions-24h"},
+    {"name":"candidate_id","required":"Required","type":"Text","description":"Stable candidate identifier, identical to the model-visible task plan. Unique within task_id + group_id. Never use spreadsheet row position as the identity.","example":"candidate_A"},
+    {"name":"candidate_description","required":"Required","type":"Text","description":"Explain the candidate, treatment or condition and all distinguishing parameters. Match the plan and give units for any quantities.","example":"Catalyst A, 1 mol%, 25 C, 24 h"},
+    {"name":"metric","required":"Required","type":"Text","description":"Outcome being ranked, including assay, endpoint, normalization and measurement time. Keep the definition consistent within a group.","example":"Product yield at 24 h"},
+    {"name":"unit","required":"Required","type":"Text","description":"Unit of the target metric. Write dimensionless for a unitless metric. Use numeric values in observed_value; do not append unit text to numbers.","example":"%"},
+    {"name":"direction","required":"Required","type":"Enum","description":"higher_first means rank 1 has the highest metric value. lower_first means rank 1 has the lowest. This specifies ordering, not whether an outcome is desirable.","example":"higher_first"},
+    {"name":"rank","required":"For ranked rows","type":"Positive integer","description":"Reference rank within a group, starting at 1. Use dense ranks, e.g. 1, 2, 2, 3. Equal ranks are evidence-supported ties. Leave blank for unknown or excluded rows; do not use 0.","example":"1"},
+    {"name":"relation_status","required":"Required","type":"Enum","description":"ranked: the reference relation is supported; unknown: insufficient evidence to rank; excluded: intentionally outside scoring, with a reason in notes. Unknown is not a tie.","example":"ranked"},
+    {"name":"observed_value","required":"When available","type":"Number","description":"Measured or curated reference value used to justify the rank. Explain preprocessing and aggregation in the plan. Leave missing values blank; a real zero remains numeric 0.","example":"82.5"},
+    {"name":"n_replicates","required":"When available","type":"Positive integer","description":"Number of independent replicates supporting the reference value. Distinguish biological/experimental and technical replicates in the plan. Leave blank if unavailable.","example":"3"},
+    {"name":"uncertainty","required":"When available","type":"Text","description":"Uncertainty measure, value, units and interval level or replicate range. State whether this is SD, SEM or a confidence interval. If unavailable, explain the limitation in notes.","example":"SD = 1.2 percentage points; n = 3"},
+    {"name":"evidence_ref","required":"Required","type":"Text","description":"Locatable evidence for the reference answer or unknown/excluded status: file + sheet/cell, figure/table, DOI, sample or experiment identifier. Link raw data rather than only a narrative conclusion.","example":"raw-results.xlsx / Sheet1!B2:B4"},
+    {"name":"notes","required":"For exceptions","type":"Text","description":"Tie justification, missing-data reason, exclusion reason, reviewer decision or other qualifications. Define every additional column in Column guide with its type, unit and allowed values.","example":"Tie follows the prespecified tolerance in task-plan.md, section 8."}
+  ],
+  "sections": [
+    {"title":"Task identity and scientific objective","detail":"Task ID, version, title, discipline, author/contact, scientific question, significance and the exact capability being evaluated."},
+    {"title":"Prediction target and comparison groups","detail":"What must be predicted, the target metric and units, measurement time, ranking direction, group boundaries and required output format."},
+    {"title":"Candidate definitions","detail":"Every candidate ID, description, structure/composition, treatment, dose and distinguishing parameters. IDs must match the answer workbook exactly."},
+    {"title":"Experimental protocol and conditions","detail":"Materials, preparation, instruments and settings, quantities and units, environment, timing, controls, replicates, randomization/blinding and relevant deviations."},
+    {"title":"Information available to the model","detail":"The self-contained task prompt, allowed inputs and files, permitted tools/web access, time or compute budget and what must be withheld from the model."},
+    {"title":"Reference data and provenance","detail":"Original data source, experiment/sample IDs, collection dates, raw-file locations, measurement methods, preprocessing, normalization, aggregation and data quality checks."},
+    {"title":"Reference ranking and scientific rationale","detail":"Explain how the answer workbook was derived, the evidence for each ordering, relevant mechanisms, assumptions and expert adjudication. Keep this out of model-visible inputs. Publication permissions follow the chosen submission channel."},
+    {"title":"Ties, uncertainty and missing comparisons","detail":"Prespecified tie criterion/tolerance, precision and uncertainty, missing or excluded candidates, incomplete comparisons and why any pair cannot be ordered. Unknown is not a tie."},
+    {"title":"Scoring and acceptance rules","detail":"Submission schema, rank convention, proposed scoring rule, treatment of ties, unknown pairs, missing/duplicate IDs and invalid outputs. Include a worked scoring example."},
+    {"title":"Reproducibility and task packaging","detail":"Required files, software/environment versions, seeds, dependencies, estimated runtime and resources, reproduction steps and optional existing Harbor package."},
+    {"title":"Rights, confidentiality and leakage controls","detail":"Ownership and permission to share for review, disclosure restrictions, answer/evidence separation, potentially public material and contamination or leakage risks."},
+    {"title":"Limitations and author checklist","detail":"Known confounders and failure modes, unresolved questions, checked candidate coverage, complete column definitions, source evidence and consistency between the plan and workbook."}
+  ]
+}

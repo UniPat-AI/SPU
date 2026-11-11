@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "channel", "source_type", "source_description", "source_url", "rights", "redistribution", "authorized", "complete_task_public"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "channel": {"const": "public_pr"},
+    "source_type": {"enum": ["public_dataset", "published_research", "own_open_data", "mixed"]},
+    "source_description": {"type": "string", "minLength": 3, "maxLength": 5000},
+    "source_url": {"type": "string", "pattern": "^https://", "maxLength": 2000},
+    "rights": {"type": "string", "minLength": 3, "maxLength": 5000},
+    "redistribution": {"enum": ["permitted", "original", "link_only"]},
+    "authorized": {"const": true},
+    "complete_task_public": {"const": true}
+  }
+}

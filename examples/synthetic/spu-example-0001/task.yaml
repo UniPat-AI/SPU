@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "task_id": "spu-example-0001",
+  "title": "Synthetic partial-order scoring example",
+  "domain": "life-sciences",
+  "language": "en",
+  "answer_type": "partial_order",
+  "candidate_ids": [
+    "A",
+    "B",
+    "C"
+  ],
+  "source_ids": [
+    "synthetic"
+  ],
+  "license": "CC0-1.0",
+  "visibility": "public",
+  "scorer": {
+    "id": "partial-order-v1",
+    "version": "1.0.0"
+  }
+}

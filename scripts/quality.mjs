@@ -1,0 +1,11 @@
+import fs from 'node:fs/promises';import path from 'node:path';
+import {reviewSubmission,configuredReviewer,renderReport} from '../quality/review.mjs';
+const [directory,bodyFile,outArg]=process.argv.slice(2);
+if(!directory||!bodyFile||!outArg)throw new Error('Usage: npm run quality -- <submission-directory> <pr-body.md> <report-directory>');
+const root=await fs.realpath(directory),out=path.resolve(outArg);
+if(out===root||out.startsWith(root+path.sep))throw new Error('Reports must be outside submitted material');
+const st=await fs.lstat(bodyFile);if(!st.isFile()||st.isSymbolicLink()||st.size>64000)throw new Error('PR body must be a small regular text file');
+const report=await reviewSubmission({directory:root,taskId:path.basename(root),body:await fs.readFile(bodyFile,'utf8'),reviewer:configuredReviewer()});
+await fs.mkdir(out,{recursive:true,mode:0o700});await fs.writeFile(path.join(out,'report.json'),JSON.stringify(report,null,2)+'\n',{mode:0o600});await fs.writeFile(path.join(out,'report.md'),renderReport(report),{mode:0o600});
+console.log(JSON.stringify({outcome:report.outcome,rules:report.rules.outcome,ai:report.ai.state,findings:report.findings.length,out}));
+if(['needs_changes','unavailable'].includes(report.outcome))process.exitCode=1;

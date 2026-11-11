@@ -1,0 +1,25 @@
+name: Report a task issue
+description: Report a scientific, data, or scoring problem.
+title: '[Task issue] '
+labels: ['kind:task-issue']
+body:
+  - type: input
+    id: task
+    attributes:
+      label: Task ID
+      placeholder: spu-example-0001
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Affected release or commit SHA
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Description and reproduction evidence
+      description: Describe the expected behavior, observed behavior, and supporting evidence.
+    validations:
+      required: true

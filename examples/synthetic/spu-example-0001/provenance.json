@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0",
+  "sources": [
+    {
+      "id": "synthetic",
+      "title": "Synthetic example",
+      "url": "https://example.com/spu-synthetic",
+      "location": "Constructed relations A>B and A>C",
+      "supports": [
+        "A>B",
+        "A>C"
+      ],
+      "redistribution": "original"
+    }
+  ]
+}
