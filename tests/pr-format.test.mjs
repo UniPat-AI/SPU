@@ -72,3 +72,13 @@ test('the summary comment lists every check with its rule, the AI review and the
  const ok=summaryComment(checkPrFormat({title,body:filled(),files:files('organoboron-fluorescence-yield')}),'<!-- m -->',{repository:'UniPat-AI/SPU',ai:{state:'success'},reportUrl:'https://example.org/r'});
  assert.match(ok,/### Automated checks ✅/);assert.match(ok,/✅ Passed · \[report\]\(https:\/\/example.org\/r\)/);
 });
+
+test('an AI review that could not run explains why in the summary',()=>{
+ const missing=checkPrFormat({title,body:filled(),files:[{filename:'submissions/organoboron-fluorescence-yield/task-plan.md'}]});
+ const c=summaryComment(missing,'<!-- m -->',{repository:'UniPat-AI/SPU',ai:{state:'error',description:'Review could not be completed'}});
+ assert.match(c,/Why the AI review did not run:\*\* it needs the task plan and the reference-rankings workbook/);
+ const complete=checkPrFormat({title,body:filled(),files:files('organoboron-fluorescence-yield')});
+ assert.match(summaryComment(complete,'<!-- m -->',{repository:'UniPat-AI/SPU',ai:{state:'error'}}),/could not finish for this commit/);
+ assert.doesNotMatch(summaryComment(complete,'<!-- m -->',{repository:'UniPat-AI/SPU',ai:{state:'pending'}}),/did not run/);
+ assert.doesNotMatch(summaryComment(complete,'<!-- m -->',{repository:'UniPat-AI/SPU',ai:{state:'failure'},reportUrl:'https://example.org/r'}),/did not run/);
+});
