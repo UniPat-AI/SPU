@@ -1,5 +1,5 @@
 import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs/promises';
-import {checkPrFormat,formatComment} from '../quality/pr-format.mjs';
+import {checkPrFormat,formatComment,summaryComment} from '../quality/pr-format.mjs';
 const read=name=>fs.readFile(new URL('../.github/'+name,import.meta.url),'utf8');
 const template=await read('PULL_REQUEST_TEMPLATE.md'),fixTemplate=await read('PULL_REQUEST_TEMPLATE/fix.md');
 const files=id=>[{filename:`submissions/${id}/task-plan.md`},{filename:`submissions/${id}/reference-rankings.xlsx`}];
@@ -32,7 +32,7 @@ test('changes to an existing task folder must use the fix template and title',()
  r=checkPrFormat({title:`[Fix] ${id}: Correct the yield unit for group 3`,body:fixTemplate,files:files(id),existingTasks});assert.ok(r.problems.some(p=>/"What is wrong"/.test(p)));
 });
 test('non-task PRs are out of scope; mixed PRs are told to split',()=>{
- assert.deepEqual(checkPrFormat({title:'Update README',body:'',files:[{filename:'README.md'}]}),{kind:'other',tasks:[],problems:[]});
+ assert.deepEqual(checkPrFormat({title:'Update README',body:'',files:[{filename:'README.md'}]}),{kind:'other',tasks:[],problems:[],checks:[]});
  const r=checkPrFormat({title,body:filled(),files:[...files('organoboron-fluorescence-yield'),{filename:'scripts/x.mjs'}]});assert.ok(r.problems.some(p=>/separate from other files/.test(p)));
 });
 test('multiple tasks can share one PR when the title lists all of them',()=>{
@@ -45,4 +45,30 @@ test('a walkthrough PR may prefix its title with [DEMO] and is otherwise checked
  assert.deepEqual(checkPrFormat({title:'[DEMO] '+title,body,files:f}).problems,[]);
  assert.ok(checkPrFormat({title:'[DEMO] '+id+': missing the task prefix',body,files:f}).problems.some(p=>p.startsWith('Title must be')));
  assert.ok(checkPrFormat({title:'[Demo] [Task] '+id+': lower-case marker is not accepted',body,files:f}).problems.length>0);
+});
+
+test('task PRs report eight named checks, each with a rule anchor',()=>{
+ const r=checkPrFormat({title,body:filled(),files:files('organoboron-fluorescence-yield')});
+ assert.deepEqual(r.checks.map(c=>c.id),['scope','title','task-id','files','task-fields','source','completeness','confirmations']);
+ assert.ok(r.checks.every(c=>c.anchor&&c.name&&c.problems.length===0));
+});
+test('the files check wants the plan and workbook, or one ZIP, but not both',()=>{
+ const plan=[{filename:'submissions/task-aaa/task-plan.md'}];
+ assert.match(checkPrFormat({title:'[Task] task-aaa: A descriptive scientific title here',body:filled('task-aaa'),files:plan}).checks.find(c=>c.id==='files').problems.join(),/reference-rankings\.xlsx/);
+ assert.deepEqual(checkPrFormat({title:'[Task] task-aaa: A descriptive scientific title here',body:filled('task-aaa'),files:[{filename:'submissions/task-aaa/submission.zip'}]}).checks.find(c=>c.id==='files').problems,[]);
+ assert.match(checkPrFormat({title:'[Task] task-aaa: A descriptive scientific title here',body:filled('task-aaa'),files:[...plan,{filename:'submissions/task-aaa/submission.zip'}]}).checks.find(c=>c.id==='files').problems.join(),/not both/);
+});
+test('an allowed source type or discipline may carry a note',()=>{
+ const body=filled().replace(/Source type: [^\n]*/,'Source type: own open data (synthetic)').replace(/Discipline: [^\n]*/,'Discipline: Chemistry (organic)');
+ assert.deepEqual(checkPrFormat({title,body,files:files('organoboron-fluorescence-yield')}).problems,[]);
+});
+test('the summary comment lists every check with its rule, the AI review and the next steps',()=>{
+ const r=checkPrFormat({title:'x',body:'',files:files('task-aaa')});
+ const c=summaryComment(r,'<!-- m -->',{repository:'UniPat-AI/SPU',ai:{state:'pending',description:'Queued'}});
+ assert.ok(c.startsWith('<!-- m -->\n### Automated checks ❌'));
+ for(const check of r.checks)assert.ok(c.includes(`[${check.name}](https://github.com/UniPat-AI/SPU/blob/main/docs/PR-FORMAT.md#${check.anchor})`));
+ assert.match(c,/AI review \(`spu\/clarity-audit`\) \| ⏳ Running or waiting · Queued/);
+ assert.match(c,/What happens next/);
+ const ok=summaryComment(checkPrFormat({title,body:filled(),files:files('organoboron-fluorescence-yield')}),'<!-- m -->',{repository:'UniPat-AI/SPU',ai:{state:'success'},reportUrl:'https://example.org/r'});
+ assert.match(ok,/### Automated checks ✅/);assert.match(ok,/✅ Passed · \[report\]\(https:\/\/example.org\/r\)/);
 });
