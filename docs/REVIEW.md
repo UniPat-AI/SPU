@@ -20,7 +20,7 @@ Passing review does not mean the scientific results have been validated; maintai
 
 | Status | What it checks | Rerun |
 | --- | --- | --- |
-| `spu/pr-format` | Title and description follow the template ([PR-FORMAT.md](PR-FORMAT.md)). A comment lists anything to fix. | Every edit or push |
+| `spu/pr-format` | Scope, title, task ID, files, description, data source, completeness and confirmations ([PR-FORMAT.md](PR-FORMAT.md#automated-checks)). One **Automated checks** comment on the PR shows each check, the AI review status and the next steps. | Every edit or push, and when the AI review finishes |
 | `spu/clarity-audit` | Automated review of the task plan, workbook and data against the criteria above, run on the SPU server when GitHub notifies it of the PR. Results are posted as a PR comment by the SPU maintainers' account. | Every push, description edit or reopen |
 | `check` | Engineering checks of this repository's own code. | Every push |
 

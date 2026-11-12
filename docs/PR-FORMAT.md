@@ -1,6 +1,6 @@
 # Pull request format
 
-Every pull request that adds or changes `submissions/<task-id>/` must follow one of two templates. The **Submission format** workflow (`spu/pr-format` status) checks the title and description on every edit. When something needs a change, it posts one comment listing what to fix and updates that comment until the PR follows the format.
+Every pull request that adds or changes `submissions/<task-id>/` must follow one of two templates. The **Submission format** workflow (`spu/pr-format` status) checks the title, description and files on every edit and push. It keeps one **Automated checks** comment on the PR, updated in place, that lists each check below with its result, the AI review status and what happens next.
 
 ## Titles
 
@@ -23,6 +23,46 @@ The default template is for new tasks. For a fix, add `?template=fix.md` to the 
 **Fix**: Task ID, what is wrong, what the PR changes, evidence, effect on reference rankings, and the two confirmations.
 
 Placeholders such as `<task-id>` count as empty. Without the automated AI processing authorization, no automated review runs (`spu/clarity-audit` stays pending).
+
+## Automated checks
+
+Each heading below is one row of the Automated checks comment. Task PRs run all checks except the fix description; fix PRs run scope, title, task ID, fix description and confirmations.
+
+### Scope
+
+The PR changes only `submissions/<task-id>/` folders. New tasks and fixes to existing tasks go in separate PRs, and changes outside `submissions/` (docs, code) go in another PR.
+
+### Title
+
+`[Task] <task-id>: <scientific title>` or `[Fix] <task-id>: <what this corrects>`, matching the folder names, with at least 15 characters after the colon and under 150 characters in total.
+
+### Task ID
+
+The description's `Task ID` lists the same task folders as the PR.
+
+### Files
+
+Each new task folder has `task-plan.md` and `reference-rankings.xlsx`, or a single `submission.zip` with both at its root, not both forms. Supporting data goes in `data/`. Task IDs are at most 80 characters.
+
+### Task description
+
+Discipline is one of Chemistry, Materials science, Biology, Medicine or Other (a short note may follow, e.g. `Chemistry (organic)`), and subfield, scientific question, prediction target and ranking direction, and candidates and groups are filled in.
+
+### Fix description
+
+What is wrong, what the PR changes, the evidence, and the effect on reference rankings are filled in.
+
+### Data source and license
+
+Source type starts with public dataset, published research, own open data or mixed (a note may follow, e.g. `own open data (synthetic)`). Source title and owner, DOI or URL, the license or permission for every file (name and link, e.g. `CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/)`) and raw versus referenced data are filled in.
+
+### Completeness checklist
+
+All six completeness items are ticked.
+
+### Confirmations
+
+The public-release confirmation and the automated AI processing authorization are ticked. Without the authorization no AI review runs.
 
 ## What the checks mean
 

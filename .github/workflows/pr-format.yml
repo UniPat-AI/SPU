@@ -1,18 +1,21 @@
 name: Submission format
-# Checks the title and description of task and fix PRs against the SPU templates and tells the author what to fix.
-# pull_request_target runs this file from the default branch; the PR's own files are never checked out or executed.
+# Checks the title and description of task and fix PRs against the SPU templates and keeps one summary comment
+# with every check, the AI review status and the next steps. A status event from the AI review refreshes it.
+# pull_request_target and status run this file from the default branch; the PR's own files are never checked out or executed.
 on:
   pull_request_target:
     types: [opened, edited, synchronize, reopened, ready_for_review]
+  status:
 permissions:
   contents: read
   pull-requests: write
   statuses: write
 concurrency:
-  group: spu-pr-format-${{ github.event.pull_request.number }}
+  group: spu-pr-format-${{ github.event.pull_request.number || github.event.sha }}
   cancel-in-progress: true
 jobs:
   format:
+    if: github.event_name != 'status' || github.event.context == 'spu/clarity-audit'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
