@@ -82,7 +82,8 @@ The project site and its services are developed separately.
 @misc{spu2026,
   title  = {Science Prediction Universe},
   author = {Tu, Zengji and Liu, Xiang and Sun, Jiarui and Wu, Ruoyu and Qi, Zhihui and Wu, Chengda and Zhou, Yutao and Yang, Bo and Zhang, Ziyan and Wu, Jialong and Chen, Liang and Li, Kuan and Dillmann, Steven and Du, Yuanqi and Yang, Soojung and Diao, Shizhe and Wu, Jianjun and Liu, Junlang and Hu, Xuming and Chang, Lin and Chang, Baobao and Chu, Xiaowen and Yu, Philip S. and Zhang, Tong-Yi and Cheng, Hao and Han, Qin and Feng, Yanye and Duan, Chenru and Liu, Chuncheng and Liu, Yan and Gao, Yuchen and Li, Zhao and Zhang, Ronghua and Xu, Tory and Song, Renjian and Fu, Yaokai},
-  year   = {2026}
+  year   = {2026},
+  url    = {https://spu.unipat.ai}
 }
 ```
 
