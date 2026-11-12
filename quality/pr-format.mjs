@@ -97,6 +97,11 @@ export function summaryComment(result,marker,{repository,branch='main',ai=null,r
  for(const c of result.checks)lines.push(`| [${c.name}](${rule(c.anchor)}) | ${c.problems.length?'❌ '+c.problems.map(p=>p.replace(/\|/g,'\\|')).join('<br>'):'✅'} |`);
  const aiLine=!ai?'⏳ Waiting to start':(AI_STATE[ai.state]||ai.state)+(ai.description?` · ${ai.description}`:'');
  lines.push(`| AI review (\`spu/clarity-audit\`) | ${aiLine}${reportUrl?` · [report](${reportUrl})`:''} |`);
+ // An AI review that could not run usually means the materials were incomplete; say what to do.
+ if(ai?.state==='error'&&!reportUrl){
+  const files=result.checks.find(c=>c.id==='files');
+  lines.push('',files?.problems.length?'> **Why the AI review did not run:** it needs the task plan and the reference-rankings workbook (or one ZIP with both). Fix the **Files** check above and push; the review reruns on the new commit.':'> **Why the AI review did not run:** the review could not finish for this commit. Push again or edit the description to rerun it; if it keeps failing, ask a maintainer in a comment.');
+ }
  if(result.kind==='fix')lines.push('','Expected title: `'+TITLE_HELP.fix+'`');
  else if(failed)lines.push('','Expected title: `'+TITLE_HELP.task+'`');
  lines.push('','**What happens next**','',
