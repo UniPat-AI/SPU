@@ -2,7 +2,7 @@
 
 # Science Prediction Universe (SPU)
 
-[Paper](paper/Science_Prediction_Universe.pdf) · [Homepage](https://spu.unipat.ai/) · [Dataset](https://huggingface.co/datasets/UnipatAI/SPU) · [Blog](https://unipat.ai/blog/SciencePredictionUniverse)
+[Paper](https://arxiv.org/abs/2611.15049) · [Homepage](https://spu.unipat.ai/) · [Dataset](https://huggingface.co/datasets/UnipatAI/SPU) · [Blog](https://unipat.ai/blog/SciencePredictionUniverse)
 
 <p align="center"><img src="assets/spu-overview.png" alt="An SPU task: the experimental definition goes to a wet lab and to an LLM agent; the agent's predicted ranking is scored against the hidden measured ranking by Spearman correlation." width="900"></p>
 
@@ -80,10 +80,14 @@ The project site and its services are developed separately.
 
 ```bibtex
 @misc{spu2026,
-  title  = {Science Prediction Universe},
-  author = {Tu, Zengji and Liu, Xiang and Sun, Jiarui and Wu, Ruoyu and Qi, Zhihui and Wu, Chengda and Zhou, Yutao and Yang, Bo and Zhang, Ziyan and Wu, Jialong and Chen, Liang and Li, Kuan and Dillmann, Steven and Du, Yuanqi and Yang, Soojung and Diao, Shizhe and Wu, Jianjun and Liu, Junlang and Hu, Xuming and Chang, Lin and Chang, Baobao and Chu, Xiaowen and Yu, Philip S. and Zhang, Tong-Yi and Cheng, Hao and Han, Qin and Feng, Yanye and Duan, Chenru and Liu, Chuncheng and Liu, Yan and Gao, Yuchen and Li, Zhao and Zhang, Ronghua and Xu, Tory and Song, Renjian and Fu, Yaokai},
-  year   = {2026},
-  url    = {https://spu.unipat.ai}
+  title         = {Science Prediction Universe},
+  author        = {Tu, Zengji and Liu, Xiang and Sun, Jiarui and Wu, Ruoyu and Qi, Zhihui and Wu, Chengda and Zhou, Yutao and Yang, Bo and Zhang, Ziyan and Wu, Jialong and Chen, Liang and Li, Kuan and Dillmann, Steven and Du, Yuanqi and Yang, Soojung and Diao, Shizhe and Wu, Jianjun and Liu, Junlang and Hu, Xuming and Chang, Lin and Chang, Baobao and Chu, Xiaowen and Yu, Philip S. and Zhang, Tong-Yi and Cheng, Hao and Han, Qin and Feng, Yanye and Duan, Chenru and Liu, Chuncheng and Liu, Yan and Gao, Yuchen and Li, Zhao and Zhang, Ronghua and Xu, Tory and Song, Renjian and Fu, Yaokai},
+  year          = {2026},
+  eprint        = {2611.15049},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.AI},
+  url           = {https://arxiv.org/abs/2611.15049},
+  note          = {Project page: https://spu.unipat.ai}
 }
 ```
 
